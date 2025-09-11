@@ -10,12 +10,7 @@ class DepartamentoController extends Controller
     public function index()
     {
         $departamentos = Departamento::all();
-        return view('departamento.index', compact('departamentos'));
-    }
-
-    public function create()
-    {
-        return view('departamento.create');
+        return  compact('departamentos');
     }
 
     public function store(Request $request)
@@ -24,25 +19,22 @@ class DepartamentoController extends Controller
             'nombre' => 'required|max:100',
             'subcuenta' => 'required|max:3',
         ]);
+
         Departamento::create($request->all());
-        return redirect()->route('departamento.index')->with('success', 'Departamento creado correctamente.');
+        return response()->json(['status' => 'success', 'message' => 'Departamento creado correctamente.']);
     }
 
-    public function edit(Departamento $departamento)
-    {
-        return view('departamento.edit', compact('departamento'));
-    }
     public function show($id)
     {
         $departamento = Departamento::find($id);
 
         if (!$departamento) {
-            return redirect()->route('departamento.index')->with('error', 'Departamento no encontrado.');
+            return response()->json(['status' => 'error', 'message' => 'Departamento no encontrado.']);
         }
 
         $departamentos = collect([$departamento]);
 
-        return view('departamento.index', compact('departamentos'));
+        return (compact('departamentos'));
     }
 
 
@@ -53,12 +45,12 @@ class DepartamentoController extends Controller
             'subcuenta' => 'required|max:3',
         ]);
         $departamento->update($request->all());
-        return redirect()->route('departamento.index')->with('success', 'Departamento actualizado correctamente.');
+        return response()->json(['success' => 'Departamento actualizado correctamente.']);
     }
 
     public function destroy(Departamento $departamento)
     {
         $departamento->delete();
-        return redirect()->route('departamento.index')->with('success', 'Departamento eliminado correctamente.');
+        return response()->json(['success' => 'Departamento eliminado correctamente.']);
     }
 }
