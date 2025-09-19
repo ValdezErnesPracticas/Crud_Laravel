@@ -9,12 +9,13 @@ class PuestoController extends Controller
 {
     public function index()
     {
-        $puesto = Puesto::all();
+        $puesto = Puesto::with('departamento:id,nombre')->get();
+
         return ( compact('puesto'));
     }
     public function show($id)
     {
-        $puesto = Puesto::find($id);
+        $puesto = Puesto::with('departamento:id,nombre')->find($id);
 
         if (!$puesto) {
             return response()->json(['error' => 'puesto no encontrado.']);
@@ -30,8 +31,9 @@ class PuestoController extends Controller
         $request->validate([
             'nombre' => 'required|max:100',
         ]);
+        
         Puesto::create($request->all());
-        return response()->json(['success' => 'Puesto creado correctamente.']);
+        return response()->json(['success' => $request->all()]);
     }
 
     public function update(Request $request, Puesto $puesto)
