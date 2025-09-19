@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Puesto;
 use Illuminate\Http\Request;
+use App\DTOs\puestoDTO;
 
 class PuestoController extends Controller
 {
@@ -11,7 +13,7 @@ class PuestoController extends Controller
     {
         $puesto = Puesto::with('departamento:id,nombre')->get();
 
-        return ( compact('puesto'));
+        return response()->json(data: puestoDTO::collection($puesto));
     }
     public function show($id)
     {
@@ -20,10 +22,7 @@ class PuestoController extends Controller
         if (!$puesto) {
             return response()->json(['error' => 'puesto no encontrado.']);
         }
-
-        $puesto = collect([$puesto]);
-
-        return (compact('puesto'));
+        return response()->json([puestoDTO::fromModel($puesto)]);
     }
 
     public function store(Request $request)
@@ -31,9 +30,9 @@ class PuestoController extends Controller
         $request->validate([
             'nombre' => 'required|max:100',
         ]);
-        
+
         Puesto::create($request->all());
-        return response()->json(['success' => $request->all()]);
+        return response()->json(['success' => 'Creado con exito']);
     }
 
     public function update(Request $request, Puesto $puesto)

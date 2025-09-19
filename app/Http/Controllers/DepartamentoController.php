@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Departamento;
 use Illuminate\Http\Request;
+use App\DTOs\DepartamentoDTO;
 
 class DepartamentoController extends Controller
 {
     public function index()
     {
         $departamentos = Departamento::all();
-        return  compact('departamentos');
+        return response()->json(data: DepartamentoDTO::collection(departamento: $departamentos));
     }
 
     public function store(Request $request)
@@ -31,10 +32,8 @@ class DepartamentoController extends Controller
         if (!$departamento) {
             return response()->json(['status' => 'error', 'message' => 'Departamento no encontrado.']);
         }
-
-        $departamentos = collect([$departamento]);
-
-        return (compact('departamentos'));
+        $dep = DepartamentoDTO::fromModel($departamento);
+        return response()->json([$dep]);
     }
 
 
